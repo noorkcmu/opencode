@@ -1,0 +1,262 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - ../llm/src/llm.ts</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">../llm/src</a> - llm.ts<span style="font-size: 80%;"> (source / <a href="llm.ts.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">38</td>
+            <td class="headerCovTableEntry">104</td>
+            <td class="headerCovTableEntryLo">36.5 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-08-24 17:58:09</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span><span class="lineCov">         80 : import { Effect, JsonSchema, Schema } from &quot;effect&quot;</span></a>
+<a name="2"><span class="lineNum">       2 </span><span class="lineCov">         86 : import { LLMClient } from &quot;./route/client&quot;</span></a>
+<a name="3"><span class="lineNum">       3 </span><span class="lineCov">        354 : import {</span></a>
+<a name="4"><span class="lineNum">       4 </span>            :   GenerationOptions,</a>
+<a name="5"><span class="lineNum">       5 </span>            :   HttpOptions,</a>
+<a name="6"><span class="lineNum">       6 </span>            :   InvalidProviderOutputReason,</a>
+<a name="7"><span class="lineNum">       7 </span>            :   LLMError,</a>
+<a name="8"><span class="lineNum">       8 </span>            :   LLMEvent,</a>
+<a name="9"><span class="lineNum">       9 </span>            :   LLMRequest,</a>
+<a name="10"><span class="lineNum">      10 </span>            :   LLMResponse,</a>
+<a name="11"><span class="lineNum">      11 </span>            :   Message,</a>
+<a name="12"><span class="lineNum">      12 </span>            :   type ModelInput as SchemaModelInput,</a>
+<a name="13"><span class="lineNum">      13 </span>            :   SystemPart,</a>
+<a name="14"><span class="lineNum">      14 </span>            :   ToolChoice,</a>
+<a name="15"><span class="lineNum">      15 </span>            :   ToolDefinition,</a>
+<a name="16"><span class="lineNum">      16 </span>            :   type ContentPart,</a>
+<a name="17"><span class="lineNum">      17 </span>            :   ToolResultPart,</a>
+<a name="18"><span class="lineNum">      18 </span>            : } from &quot;./schema&quot;</a>
+<a name="19"><span class="lineNum">      19 </span><span class="lineCov">        114 : import { make as makeTool, toDefinitions, type ToolSchema } from &quot;./tool&quot;</span></a>
+<a name="20"><span class="lineNum">      20 </span>            : </a>
+<a name="21"><span class="lineNum">      21 </span>            : export type ModelInput = SchemaModelInput</a>
+<a name="22"><span class="lineNum">      22 </span>            : </a>
+<a name="23"><span class="lineNum">      23 </span>            : export type MessageInput = Message.Input</a>
+<a name="24"><span class="lineNum">      24 </span>            : </a>
+<a name="25"><span class="lineNum">      25 </span>            : export type ToolChoiceInput = ToolChoice.Input</a>
+<a name="26"><span class="lineNum">      26 </span>            : export type ToolChoiceMode = ToolChoice.Mode</a>
+<a name="27"><span class="lineNum">      27 </span>            : </a>
+<a name="28"><span class="lineNum">      28 </span>            : export type ToolResultInput = Parameters&lt;typeof ToolResultPart.make&gt;[0]</a>
+<a name="29"><span class="lineNum">      29 </span>            : </a>
+<a name="30"><span class="lineNum">      30 </span>            : /** Input accepted by `LLM.request`, normalized into the canonical `LLMRequest` class. */</a>
+<a name="31"><span class="lineNum">      31 </span>            : export type RequestInput = Omit&lt;</a>
+<a name="32"><span class="lineNum">      32 </span>            :   ConstructorParameters&lt;typeof LLMRequest&gt;[0],</a>
+<a name="33"><span class="lineNum">      33 </span>            :   &quot;system&quot; | &quot;messages&quot; | &quot;tools&quot; | &quot;toolChoice&quot; | &quot;generation&quot; | &quot;http&quot; | &quot;providerOptions&quot;</a>
+<a name="34"><span class="lineNum">      34 </span>            : &gt; &amp; {</a>
+<a name="35"><span class="lineNum">      35 </span>            :   readonly system?: string | SystemPart | ReadonlyArray&lt;SystemPart&gt;</a>
+<a name="36"><span class="lineNum">      36 </span>            :   readonly prompt?: string | ContentPart | ReadonlyArray&lt;ContentPart&gt;</a>
+<a name="37"><span class="lineNum">      37 </span>            :   readonly messages?: ReadonlyArray&lt;Message | MessageInput&gt;</a>
+<a name="38"><span class="lineNum">      38 </span>            :   readonly tools?: ReadonlyArray&lt;ToolDefinition.Input&gt;</a>
+<a name="39"><span class="lineNum">      39 </span>            :   readonly toolChoice?: ToolChoiceInput</a>
+<a name="40"><span class="lineNum">      40 </span>            :   readonly generation?: GenerationOptions.Input</a>
+<a name="41"><span class="lineNum">      41 </span>            :   readonly providerOptions?: ConstructorParameters&lt;typeof LLMRequest&gt;[0][&quot;providerOptions&quot;]</a>
+<a name="42"><span class="lineNum">      42 </span>            :   readonly http?: HttpOptions.Input</a>
+<a name="43"><span class="lineNum">      43 </span>            : }</a>
+<a name="44"><span class="lineNum">      44 </span>            : </a>
+<a name="45"><span class="lineNum">      45 </span><span class="lineCov">         86 : export const generate = LLMClient.generate</span></a>
+<a name="46"><span class="lineNum">      46 </span>            : </a>
+<a name="47"><span class="lineNum">      47 </span><span class="lineCov">         78 : export const stream = LLMClient.stream</span></a>
+<a name="48"><span class="lineNum">      48 </span>            : </a>
+<a name="49"><span class="lineNum">      49 </span><span class="lineNoCov">          0 : export const requestInput = (input: LLMRequest): RequestInput =&gt; ({</span></a>
+<a name="50"><span class="lineNum">      50 </span><span class="lineCov">         24 :   ...LLMRequest.input(input),</span></a>
+<a name="51"><span class="lineNum">      51 </span><span class="lineCov">          5 : })</span></a>
+<a name="52"><span class="lineNum">      52 </span>            : </a>
+<a name="53"><span class="lineNum">      53 </span><span class="lineCov">         71 : export const request = (input: RequestInput) =&gt; {</span></a>
+<a name="54"><span class="lineNum">      54 </span><span class="lineCov">         22 :   const {</span></a>
+<a name="55"><span class="lineNum">      55 </span><span class="lineCov">         52 :     system: requestSystem,</span></a>
+<a name="56"><span class="lineNum">      56 </span><span class="lineCov">         22 :     prompt,</span></a>
+<a name="57"><span class="lineNum">      57 </span><span class="lineCov">         26 :     messages,</span></a>
+<a name="58"><span class="lineNum">      58 </span><span class="lineCov">         20 :     tools,</span></a>
+<a name="59"><span class="lineNum">      59 </span><span class="lineCov">         68 :     toolChoice: requestToolChoice,</span></a>
+<a name="60"><span class="lineNum">      60 </span><span class="lineCov">         68 :     generation: requestGeneration,</span></a>
+<a name="61"><span class="lineNum">      61 </span><span class="lineCov">         88 :     providerOptions: requestProviderOptions,</span></a>
+<a name="62"><span class="lineNum">      62 </span><span class="lineCov">         50 :     http: requestHttp,</span></a>
+<a name="63"><span class="lineNum">      63 </span><span class="lineCov">         20 :     ...rest</span></a>
+<a name="64"><span class="lineNum">      64 </span><span class="lineCov">         16 :   } = input</span></a>
+<a name="65"><span class="lineNum">      65 </span><span class="lineCov">         60 :   return new LLMRequest({</span></a>
+<a name="66"><span class="lineNum">      66 </span><span class="lineCov">         18 :     ...rest,</span></a>
+<a name="67"><span class="lineNum">      67 </span><span class="lineCov">         92 :     system: SystemPart.content(requestSystem),</span></a>
+<a name="68"><span class="lineNum">      68 </span><span class="lineCov">        213 :     messages: [...(messages?.map(Message.make) ?? []), ...(prompt === undefined ? [] : [Message.user(prompt)])],</span></a>
+<a name="69"><span class="lineNum">      69 </span><span class="lineCov">         98 :     tools: tools?.map(ToolDefinition.make) ?? [],</span></a>
+<a name="70"><span class="lineNum">      70 </span><span class="lineCov">        163 :     toolChoice: requestToolChoice ? ToolChoice.make(requestToolChoice) : undefined,</span></a>
+<a name="71"><span class="lineNum">      71 </span><span class="lineCov">        205 :     generation: requestGeneration === undefined ? undefined : GenerationOptions.make(requestGeneration),</span></a>
+<a name="72"><span class="lineNum">      72 </span><span class="lineCov">         88 :     providerOptions: requestProviderOptions,</span></a>
+<a name="73"><span class="lineNum">      73 </span><span class="lineCov">        120 :     http: requestHttp === undefined ? undefined : HttpOptions.make(requestHttp),</span></a>
+<a name="74"><span class="lineNum">      74 </span><span class="lineCov">         10 :   })</span></a>
+<a name="75"><span class="lineNum">      75 </span>            : }</a>
+<a name="76"><span class="lineNum">      76 </span>            : </a>
+<a name="77"><span class="lineNum">      77 </span><span class="lineNoCov">          0 : export const updateRequest = (input: LLMRequest, patch: Partial&lt;RequestInput&gt;) =&gt;</span></a>
+<a name="78"><span class="lineNum">      78 </span><span class="lineCov">         49 :   request({ ...requestInput(input), ...patch })</span></a>
+<a name="79"><span class="lineNum">      79 </span>            : </a>
+<a name="80"><span class="lineNum">      80 </span><span class="lineCov">        104 : const GENERATE_OBJECT_TOOL_NAME = &quot;generate_object&quot;</span></a>
+<a name="81"><span class="lineNum">      81 </span>            : </a>
+<a name="82"><span class="lineNum">      82 </span><span class="lineCov">        188 : const GENERATE_OBJECT_TOOL_DESCRIPTION = &quot;Return the structured result by calling this tool.&quot;</span></a>
+<a name="83"><span class="lineNum">      83 </span>            : </a>
+<a name="84"><span class="lineNum">      84 </span>            : type GenerateObjectBase = Omit&lt;RequestInput, &quot;tools&quot; | &quot;toolChoice&quot; | &quot;responseFormat&quot;&gt;</a>
+<a name="85"><span class="lineNum">      85 </span>            : </a>
+<a name="86"><span class="lineNum">      86 </span>            : export class GenerateObjectResponse&lt;T&gt; {</a>
+<a name="87"><span class="lineNum">      87 </span><span class="lineNoCov">          0 :   constructor(</span></a>
+<a name="88"><span class="lineNum">      88 </span><span class="lineNoCov">          0 :     readonly object: T,</span></a>
+<a name="89"><span class="lineNum">      89 </span><span class="lineNoCov">          0 :     readonly response: LLMResponse,</span></a>
+<a name="90"><span class="lineNum">      90 </span><span class="lineNoCov">          0 :   ) {}</span></a>
+<a name="91"><span class="lineNum">      91 </span><span class="lineNoCov">          0 : </span></a>
+<a name="92"><span class="lineNum">      92 </span><span class="lineNoCov">          0 :   get events() {</span></a>
+<a name="93"><span class="lineNum">      93 </span><span class="lineNoCov">          0 :     return this.response.events</span></a>
+<a name="94"><span class="lineNum">      94 </span><span class="lineNoCov">          0 :   }</span></a>
+<a name="95"><span class="lineNum">      95 </span><span class="lineNoCov">          0 : </span></a>
+<a name="96"><span class="lineNum">      96 </span><span class="lineNoCov">          0 :   get usage() {</span></a>
+<a name="97"><span class="lineNum">      97 </span><span class="lineCov">         32 :     return this.response.usage</span></a>
+<a name="98"><span class="lineNum">      98 </span>            :   }</a>
+<a name="99"><span class="lineNum">      99 </span><span class="lineCov">          2 : }</span></a>
+<a name="100"><span class="lineNum">     100 </span>            : </a>
+<a name="101"><span class="lineNum">     101 </span>            : export interface GenerateObjectOptions&lt;S extends ToolSchema&lt;any&gt;&gt; extends GenerateObjectBase {</a>
+<a name="102"><span class="lineNum">     102 </span>            :   readonly schema: S</a>
+<a name="103"><span class="lineNum">     103 </span>            : }</a>
+<a name="104"><span class="lineNum">     104 </span>            : </a>
+<a name="105"><span class="lineNum">     105 </span>            : export interface GenerateObjectDynamicOptions extends GenerateObjectBase {</a>
+<a name="106"><span class="lineNum">     106 </span>            :   /** Raw JSON Schema object describing the expected output shape. */</a>
+<a name="107"><span class="lineNum">     107 </span>            :   readonly jsonSchema: JsonSchema.JsonSchema</a>
+<a name="108"><span class="lineNum">     108 </span>            : }</a>
+<a name="109"><span class="lineNum">     109 </span>            : </a>
+<a name="110"><span class="lineNum">     110 </span><span class="lineNoCov">          0 : const runGenerateObject = Effect.fn(&quot;LLM.generateObject&quot;)(function* (</span></a>
+<a name="111"><span class="lineNum">     111 </span><span class="lineNoCov">          0 :   options: GenerateObjectBase,</span></a>
+<a name="112"><span class="lineNum">     112 </span><span class="lineNoCov">          0 :   tool: ReturnType&lt;typeof makeTool&gt;,</span></a>
+<a name="113"><span class="lineNum">     113 </span><span class="lineNoCov">          0 : ) {</span></a>
+<a name="114"><span class="lineNum">     114 </span><span class="lineNoCov">          0 :   const baseRequest = request(options)</span></a>
+<a name="115"><span class="lineNum">     115 </span><span class="lineNoCov">          0 :   const generateRequest = LLMRequest.update(baseRequest, {</span></a>
+<a name="116"><span class="lineNum">     116 </span><span class="lineNoCov">          0 :     tools: toDefinitions({ [GENERATE_OBJECT_TOOL_NAME]: tool }),</span></a>
+<a name="117"><span class="lineNum">     117 </span><span class="lineNoCov">          0 :     toolChoice: ToolChoice.named(GENERATE_OBJECT_TOOL_NAME),</span></a>
+<a name="118"><span class="lineNum">     118 </span><span class="lineNoCov">          0 :   })</span></a>
+<a name="119"><span class="lineNum">     119 </span><span class="lineNoCov">          0 :   const response = yield* LLMClient.generate(generateRequest)</span></a>
+<a name="120"><span class="lineNum">     120 </span><span class="lineNoCov">          0 :   const call = response.toolCalls.find(</span></a>
+<a name="121"><span class="lineNum">     121 </span><span class="lineNoCov">          0 :     (event) =&gt; LLMEvent.is.toolCall(event) &amp;&amp; event.name === GENERATE_OBJECT_TOOL_NAME,</span></a>
+<a name="122"><span class="lineNum">     122 </span><span class="lineNoCov">          0 :   )</span></a>
+<a name="123"><span class="lineNum">     123 </span><span class="lineNoCov">          0 :   if (!call || !LLMEvent.is.toolCall(call))</span></a>
+<a name="124"><span class="lineNum">     124 </span><span class="lineNoCov">          0 :     return yield* new LLMError({</span></a>
+<a name="125"><span class="lineNum">     125 </span><span class="lineNoCov">          0 :       module: &quot;LLM&quot;,</span></a>
+<a name="126"><span class="lineNum">     126 </span><span class="lineNoCov">          0 :       method: &quot;generateObject&quot;,</span></a>
+<a name="127"><span class="lineNum">     127 </span><span class="lineNoCov">          0 :       reason: new InvalidProviderOutputReason({</span></a>
+<a name="128"><span class="lineNum">     128 </span><span class="lineNoCov">          0 :         message: `generateObject: model did not call the forced \`${GENERATE_OBJECT_TOOL_NAME}\` tool`,</span></a>
+<a name="129"><span class="lineNum">     129 </span><span class="lineNoCov">          0 :       }),</span></a>
+<a name="130"><span class="lineNum">     130 </span><span class="lineNoCov">          0 :     })</span></a>
+<a name="131"><span class="lineNum">     131 </span><span class="lineNoCov">          0 :   const object = yield* tool._decode(call.input).pipe(</span></a>
+<a name="132"><span class="lineNum">     132 </span><span class="lineNoCov">          0 :     Effect.mapError(</span></a>
+<a name="133"><span class="lineNum">     133 </span><span class="lineNoCov">          0 :       (error) =&gt;</span></a>
+<a name="134"><span class="lineNum">     134 </span><span class="lineNoCov">          0 :         new LLMError({</span></a>
+<a name="135"><span class="lineNum">     135 </span><span class="lineNoCov">          0 :           module: &quot;LLM&quot;,</span></a>
+<a name="136"><span class="lineNum">     136 </span><span class="lineNoCov">          0 :           method: &quot;generateObject&quot;,</span></a>
+<a name="137"><span class="lineNum">     137 </span><span class="lineNoCov">          0 :           reason: new InvalidProviderOutputReason({</span></a>
+<a name="138"><span class="lineNum">     138 </span><span class="lineNoCov">          0 :             message: `generateObject: tool input failed schema decode: ${error.message}`,</span></a>
+<a name="139"><span class="lineNum">     139 </span><span class="lineNoCov">          0 :           }),</span></a>
+<a name="140"><span class="lineNum">     140 </span><span class="lineNoCov">          0 :         }),</span></a>
+<a name="141"><span class="lineNum">     141 </span><span class="lineNoCov">          0 :     ),</span></a>
+<a name="142"><span class="lineNum">     142 </span><span class="lineNoCov">          0 :   )</span></a>
+<a name="143"><span class="lineNum">     143 </span><span class="lineCov">         53 :   return new GenerateObjectResponse(object, response)</span></a>
+<a name="144"><span class="lineNum">     144 </span><span class="lineCov">          6 : })</span></a>
+<a name="145"><span class="lineNum">     145 </span>            : </a>
+<a name="146"><span class="lineNum">     146 </span>            : /**</a>
+<a name="147"><span class="lineNum">     147 </span>            :  * Run a model and decode its output against `schema`. Works on every protocol</a>
+<a name="148"><span class="lineNum">     148 </span>            :  * because it forces a synthetic tool call internally — provider-native JSON</a>
+<a name="149"><span class="lineNum">     149 </span>            :  * modes are intentionally avoided so behaviour is uniform.</a>
+<a name="150"><span class="lineNum">     150 </span>            :  *</a>
+<a name="151"><span class="lineNum">     151 </span>            :  * Two input modes:</a>
+<a name="152"><span class="lineNum">     152 </span>            :  *</a>
+<a name="153"><span class="lineNum">     153 </span>            :  * 1. `schema: EffectSchema&lt;T&gt;` — `.object` is decoded and typed as `T`.</a>
+<a name="154"><span class="lineNum">     154 </span>            :  *    Decode failures surface as `LLMError`.</a>
+<a name="155"><span class="lineNum">     155 </span>            :  * 2. `jsonSchema: JsonSchema.JsonSchema` — `.object` is `unknown`. Use when</a>
+<a name="156"><span class="lineNum">     156 </span>            :  *    the schema is only available at runtime (MCP, plugin manifests). Caller validates.</a>
+<a name="157"><span class="lineNum">     157 </span>            :  */</a>
+<a name="158"><span class="lineNum">     158 </span>            : export function generateObject&lt;S extends ToolSchema&lt;any&gt;&gt;(</a>
+<a name="159"><span class="lineNum">     159 </span>            :   options: GenerateObjectOptions&lt;S&gt;,</a>
+<a name="160"><span class="lineNum">     160 </span>            : ): Effect.Effect&lt;GenerateObjectResponse&lt;Schema.Schema.Type&lt;S&gt;&gt;, LLMError&gt;</a>
+<a name="161"><span class="lineNum">     161 </span>            : export function generateObject(</a>
+<a name="162"><span class="lineNum">     162 </span>            :   options: GenerateObjectDynamicOptions,</a>
+<a name="163"><span class="lineNum">     163 </span>            : ): Effect.Effect&lt;GenerateObjectResponse&lt;unknown&gt;, LLMError&gt;</a>
+<a name="164"><span class="lineNum">     164 </span><span class="lineNoCov">          0 : export function generateObject(options: GenerateObjectOptions&lt;ToolSchema&lt;any&gt;&gt; | GenerateObjectDynamicOptions) {</span></a>
+<a name="165"><span class="lineNum">     165 </span><span class="lineNoCov">          0 :   if (&quot;schema&quot; in options) {</span></a>
+<a name="166"><span class="lineNum">     166 </span><span class="lineNoCov">          0 :     const { schema, ...rest } = options</span></a>
+<a name="167"><span class="lineNum">     167 </span><span class="lineNoCov">          0 :     return runGenerateObject(</span></a>
+<a name="168"><span class="lineNum">     168 </span><span class="lineNoCov">          0 :       rest,</span></a>
+<a name="169"><span class="lineNum">     169 </span><span class="lineNoCov">          0 :       makeTool({</span></a>
+<a name="170"><span class="lineNum">     170 </span><span class="lineNoCov">          0 :         description: GENERATE_OBJECT_TOOL_DESCRIPTION,</span></a>
+<a name="171"><span class="lineNum">     171 </span><span class="lineNoCov">          0 :         parameters: schema,</span></a>
+<a name="172"><span class="lineNum">     172 </span><span class="lineNoCov">          0 :         success: Schema.Unknown as ToolSchema&lt;unknown&gt;,</span></a>
+<a name="173"><span class="lineNum">     173 </span><span class="lineNoCov">          0 :         execute: () =&gt; Effect.void,</span></a>
+<a name="174"><span class="lineNum">     174 </span><span class="lineNoCov">          0 :       }),</span></a>
+<a name="175"><span class="lineNum">     175 </span><span class="lineNoCov">          0 :     )</span></a>
+<a name="176"><span class="lineNum">     176 </span><span class="lineNoCov">          0 :   }</span></a>
+<a name="177"><span class="lineNum">     177 </span><span class="lineNoCov">          0 :   const { jsonSchema, ...rest } = options</span></a>
+<a name="178"><span class="lineNum">     178 </span><span class="lineNoCov">          0 :   return runGenerateObject(</span></a>
+<a name="179"><span class="lineNum">     179 </span><span class="lineNoCov">          0 :     rest,</span></a>
+<a name="180"><span class="lineNum">     180 </span><span class="lineNoCov">          0 :     makeTool({</span></a>
+<a name="181"><span class="lineNum">     181 </span><span class="lineNoCov">          0 :       description: GENERATE_OBJECT_TOOL_DESCRIPTION,</span></a>
+<a name="182"><span class="lineNum">     182 </span><span class="lineNoCov">          0 :       jsonSchema,</span></a>
+<a name="183"><span class="lineNum">     183 </span><span class="lineNoCov">          0 :       execute: () =&gt; Effect.void,</span></a>
+<a name="184"><span class="lineNum">     184 </span><span class="lineNoCov">          0 :     }),</span></a>
+<a name="185"><span class="lineNum">     185 </span><span class="lineCov">          4 :   )</span></a>
+<a name="186"><span class="lineNum">     186 </span>            : }</a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="https://github.com/linux-test-project/lcov" target="_parent">LCOV version 1.16</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

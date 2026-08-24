@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - ../llm/src/route/auth-options.ts</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">../llm/src/route</a> - auth-options.ts<span style="font-size: 80%;"> (source / <a href="auth-options.ts.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntryLo">30.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-08-24 17:58:09</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : import type { Config, Redacted } from &quot;effect&quot;</a>
+<a name="2"><span class="lineNum">       2 </span><span class="lineCov">         30 : import { Auth } from &quot;./auth&quot;</span></a>
+<a name="3"><span class="lineNum">       3 </span>            : </a>
+<a name="4"><span class="lineNum">       4 </span>            : export type ApiKeyMode = &quot;optional&quot; | &quot;required&quot;</a>
+<a name="5"><span class="lineNum">       5 </span>            : </a>
+<a name="6"><span class="lineNum">       6 </span>            : export type AuthOverride = {</a>
+<a name="7"><span class="lineNum">       7 </span>            :   readonly auth: Auth</a>
+<a name="8"><span class="lineNum">       8 </span>            :   readonly apiKey?: never</a>
+<a name="9"><span class="lineNum">       9 </span>            : }</a>
+<a name="10"><span class="lineNum">      10 </span>            : </a>
+<a name="11"><span class="lineNum">      11 </span>            : export type OptionalApiKeyAuth = {</a>
+<a name="12"><span class="lineNum">      12 </span>            :   readonly apiKey?: string | Redacted.Redacted&lt;string&gt; | Config.Config&lt;string | Redacted.Redacted&lt;string&gt;&gt;</a>
+<a name="13"><span class="lineNum">      13 </span>            :   readonly auth?: never</a>
+<a name="14"><span class="lineNum">      14 </span>            : }</a>
+<a name="15"><span class="lineNum">      15 </span>            : </a>
+<a name="16"><span class="lineNum">      16 </span>            : export type RequiredApiKeyAuth = {</a>
+<a name="17"><span class="lineNum">      17 </span>            :   readonly apiKey: string | Redacted.Redacted&lt;string&gt; | Config.Config&lt;string | Redacted.Redacted&lt;string&gt;&gt;</a>
+<a name="18"><span class="lineNum">      18 </span>            :   readonly auth?: never</a>
+<a name="19"><span class="lineNum">      19 </span>            : }</a>
+<a name="20"><span class="lineNum">      20 </span>            : </a>
+<a name="21"><span class="lineNum">      21 </span>            : export type ProviderAuthOption&lt;Mode extends ApiKeyMode&gt; =</a>
+<a name="22"><span class="lineNum">      22 </span>            :   | AuthOverride</a>
+<a name="23"><span class="lineNum">      23 </span>            :   | (Mode extends &quot;optional&quot; ? OptionalApiKeyAuth : RequiredApiKeyAuth)</a>
+<a name="24"><span class="lineNum">      24 </span>            : </a>
+<a name="25"><span class="lineNum">      25 </span>            : export type ModelOptions&lt;Base, Mode extends ApiKeyMode&gt; = Omit&lt;Base, &quot;apiKey&quot; | &quot;auth&quot;&gt; &amp; ProviderAuthOption&lt;Mode&gt;</a>
+<a name="26"><span class="lineNum">      26 </span>            : </a>
+<a name="27"><span class="lineNum">      27 </span>            : export type ModelArgs&lt;Base, Mode extends ApiKeyMode&gt; = Mode extends &quot;optional&quot;</a>
+<a name="28"><span class="lineNum">      28 </span>            :   ? readonly [options?: ModelOptions&lt;Base, Mode&gt;]</a>
+<a name="29"><span class="lineNum">      29 </span>            :   : readonly [options: ModelOptions&lt;Base, Mode&gt;]</a>
+<a name="30"><span class="lineNum">      30 </span>            : </a>
+<a name="31"><span class="lineNum">      31 </span>            : export type ModelFactory&lt;Base, Mode extends ApiKeyMode, Model&gt; = (id: string, ...args: ModelArgs&lt;Base, Mode&gt;) =&gt; Model</a>
+<a name="32"><span class="lineNum">      32 </span>            : </a>
+<a name="33"><span class="lineNum">      33 </span>            : /**</a>
+<a name="34"><span class="lineNum">      34 </span>            :  * Require at least one of the keys in `T`. Use for option shapes where any</a>
+<a name="35"><span class="lineNum">      35 </span>            :  * subset of fields is acceptable but at least one must be present (e.g. Azure</a>
+<a name="36"><span class="lineNum">      36 </span>            :  * accepts `resourceName` or `baseURL`).</a>
+<a name="37"><span class="lineNum">      37 </span>            :  */</a>
+<a name="38"><span class="lineNum">      38 </span>            : export type AtLeastOne&lt;T&gt; = {</a>
+<a name="39"><span class="lineNum">      39 </span>            :   [K in keyof T]: Required&lt;Pick&lt;T, K&gt;&gt; &amp; Partial&lt;Omit&lt;T, K&gt;&gt;</a>
+<a name="40"><span class="lineNum">      40 </span>            : }[keyof T]</a>
+<a name="41"><span class="lineNum">      41 </span>            : </a>
+<a name="42"><span class="lineNum">      42 </span>            : /**</a>
+<a name="43"><span class="lineNum">      43 </span>            :  * Standard bearer-auth resolution for providers: honor an explicit `auth`</a>
+<a name="44"><span class="lineNum">      44 </span>            :  * override, otherwise resolve `apiKey` (option &gt; config var) and apply it as</a>
+<a name="45"><span class="lineNum">      45 </span>            :  * a bearer token.</a>
+<a name="46"><span class="lineNum">      46 </span>            :  */</a>
+<a name="47"><span class="lineNum">      47 </span><span class="lineNoCov">          0 : export const bearer = (options: ProviderAuthOption&lt;&quot;optional&quot;&gt;, envVar: string | ReadonlyArray&lt;string&gt;): Auth =&gt; {</span></a>
+<a name="48"><span class="lineNum">      48 </span><span class="lineNoCov">          0 :   if (&quot;auth&quot; in options &amp;&amp; options.auth) return options.auth</span></a>
+<a name="49"><span class="lineNum">      49 </span><span class="lineNoCov">          0 :   return (Array.isArray(envVar) ? envVar : [envVar])</span></a>
+<a name="50"><span class="lineNum">      50 </span><span class="lineNoCov">          0 :     .reduce(</span></a>
+<a name="51"><span class="lineNum">      51 </span><span class="lineNoCov">          0 :       (auth, name) =&gt; auth.orElse(Auth.config(name)),</span></a>
+<a name="52"><span class="lineNum">      52 </span><span class="lineNoCov">          0 :       Auth.optional(&quot;apiKey&quot; in options ? options.apiKey : undefined, &quot;apiKey&quot;),</span></a>
+<a name="53"><span class="lineNum">      53 </span><span class="lineNoCov">          0 :     )</span></a>
+<a name="54"><span class="lineNum">      54 </span><span class="lineCov">          2 :     .bearer()</span></a>
+<a name="55"><span class="lineNum">      55 </span>            : }</a>
+<a name="56"><span class="lineNum">      56 </span>            : </a>
+<a name="57"><span class="lineNum">      57 </span><span class="lineCov">         45 : export * as AuthOptions from &quot;./auth-options&quot;</span></a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="https://github.com/linux-test-project/lcov" target="_parent">LCOV version 1.16</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - ../llm/src/route/endpoint.ts</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">../llm/src/route</a> - endpoint.ts<span style="font-size: 80%;"> (source / <a href="endpoint.ts.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">19</td>
+            <td class="headerCovTableEntry">19</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-08-24 17:58:09</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : import type { LLMRequest } from &quot;../schema&quot;</a>
+<a name="2"><span class="lineNum">       2 </span><span class="lineCov">         54 : import * as ProviderShared from &quot;../protocols/shared&quot;</span></a>
+<a name="3"><span class="lineNum">       3 </span>            : </a>
+<a name="4"><span class="lineNum">       4 </span>            : export interface EndpointInput&lt;Body&gt; {</a>
+<a name="5"><span class="lineNum">       5 </span>            :   readonly request: LLMRequest</a>
+<a name="6"><span class="lineNum">       6 </span>            :   readonly body: Body</a>
+<a name="7"><span class="lineNum">       7 </span>            : }</a>
+<a name="8"><span class="lineNum">       8 </span>            : </a>
+<a name="9"><span class="lineNum">       9 </span>            : export type EndpointPart&lt;Body&gt; = string | ((input: EndpointInput&lt;Body&gt;) =&gt; string)</a>
+<a name="10"><span class="lineNum">      10 </span>            : </a>
+<a name="11"><span class="lineNum">      11 </span>            : /**</a>
+<a name="12"><span class="lineNum">      12 </span>            :  * Declarative URL construction for one route.</a>
+<a name="13"><span class="lineNum">      13 </span>            :  *</a>
+<a name="14"><span class="lineNum">      14 </span>            :  * `Endpoint` carries URL construction for one route. Routes with a canonical</a>
+<a name="15"><span class="lineNum">      15 </span>            :  * host put `baseURL` here; provider helpers can override it by configuring the</a>
+<a name="16"><span class="lineNum">      16 </span>            :  * route before selecting a model.</a>
+<a name="17"><span class="lineNum">      17 </span>            :  *</a>
+<a name="18"><span class="lineNum">      18 </span>            :  * `path` may be a string or a function of `EndpointInput`, for routes whose</a>
+<a name="19"><span class="lineNum">      19 </span>            :  * URL embeds the model id, region, or another body field (e.g. Bedrock,</a>
+<a name="20"><span class="lineNum">      20 </span>            :  * Gemini).</a>
+<a name="21"><span class="lineNum">      21 </span>            :  */</a>
+<a name="22"><span class="lineNum">      22 </span>            : export interface Endpoint&lt;Body&gt; {</a>
+<a name="23"><span class="lineNum">      23 </span>            :   readonly baseURL?: string</a>
+<a name="24"><span class="lineNum">      24 </span>            :   readonly path: EndpointPart&lt;Body&gt;</a>
+<a name="25"><span class="lineNum">      25 </span>            :   readonly query?: Record&lt;string, string&gt;</a>
+<a name="26"><span class="lineNum">      26 </span>            : }</a>
+<a name="27"><span class="lineNum">      27 </span>            : </a>
+<a name="28"><span class="lineNum">      28 </span>            : export type EndpointPatch&lt;Body&gt; = Partial&lt;Endpoint&lt;Body&gt;&gt;</a>
+<a name="29"><span class="lineNum">      29 </span>            : </a>
+<a name="30"><span class="lineNum">      30 </span>            : /** Construct an `Endpoint` from a path string or path function. */</a>
+<a name="31"><span class="lineNum">      31 </span><span class="lineCov">         50 : export const path = &lt;Body&gt;(value: EndpointPart&lt;Body&gt;, options: Omit&lt;Endpoint&lt;Body&gt;, &quot;path&quot;&gt; = {}): Endpoint&lt;Body&gt; =&gt; ({</span></a>
+<a name="32"><span class="lineNum">      32 </span><span class="lineCov">         10 :   ...options,</span></a>
+<a name="33"><span class="lineNum">      33 </span><span class="lineCov">         12 :   path: value,</span></a>
+<a name="34"><span class="lineNum">      34 </span><span class="lineCov">          2 : })</span></a>
+<a name="35"><span class="lineNum">      35 </span>            : </a>
+<a name="36"><span class="lineNum">      36 </span><span class="lineCov">         43 : export const merge = &lt;Body&gt;(base: Endpoint&lt;Body&gt;, patch: EndpointPatch&lt;Body&gt;): Endpoint&lt;Body&gt; =&gt; ({</span></a>
+<a name="37"><span class="lineNum">      37 </span><span class="lineCov">         10 :   ...base,</span></a>
+<a name="38"><span class="lineNum">      38 </span><span class="lineCov">          8 :   ...patch,</span></a>
+<a name="39"><span class="lineNum">      39 </span><span class="lineCov">         41 :   baseURL: patch.baseURL ?? base.baseURL,</span></a>
+<a name="40"><span class="lineNum">      40 </span><span class="lineCov">         32 :   path: patch.path ?? base.path,</span></a>
+<a name="41"><span class="lineNum">      41 </span><span class="lineCov">         44 :   query: patch.query === undefined ? base.query : { ...base.query, ...patch.query },</span></a>
+<a name="42"><span class="lineNum">      42 </span><span class="lineCov">          2 : })</span></a>
+<a name="43"><span class="lineNum">      43 </span>            : </a>
+<a name="44"><span class="lineNum">      44 </span><span class="lineCov">         34 : const renderPart = &lt;Body&gt;(part: EndpointPart&lt;Body&gt;, input: EndpointInput&lt;Body&gt;) =&gt;</span></a>
+<a name="45"><span class="lineNum">      45 </span><span class="lineCov">         36 :   typeof part === &quot;function&quot; ? part(input) : part</span></a>
+<a name="46"><span class="lineNum">      46 </span>            : </a>
+<a name="47"><span class="lineNum">      47 </span><span class="lineCov">         44 : export const render = &lt;Body&gt;(endpoint: Endpoint&lt;Body&gt;, input: EndpointInput&lt;Body&gt;) =&gt; {</span></a>
+<a name="48"><span class="lineNum">      48 </span><span class="lineCov">        114 :   const url = new URL(`${ProviderShared.trimBaseUrl(endpoint.baseURL ?? &quot;&quot;)}${renderPart(endpoint.path, input)}`)</span></a>
+<a name="49"><span class="lineNum">      49 </span><span class="lineCov">         69 :   for (const [key, value] of Object.entries(endpoint.query ?? {})) url.searchParams.set(key, value)</span></a>
+<a name="50"><span class="lineNum">      50 </span><span class="lineCov">         12 :   return url</span></a>
+<a name="51"><span class="lineNum">      51 </span>            : }</a>
+<a name="52"><span class="lineNum">      52 </span>            : </a>
+<a name="53"><span class="lineNum">      53 </span><span class="lineCov">         38 : export * as Endpoint from &quot;./endpoint&quot;</span></a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="https://github.com/linux-test-project/lcov" target="_parent">LCOV version 1.16</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

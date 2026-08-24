@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - ../llm/src/index.ts</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">../llm/src</a> - index.ts<span style="font-size: 80%;"> (source / <a href="index.ts.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-08-24 17:58:09</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span><span class="lineCov">         43 : export { LLMClient } from &quot;./route/client&quot;</span></a>
+<a name="2"><span class="lineNum">       2 </span><span class="lineCov">         36 : export { Auth } from &quot;./route/auth&quot;</span></a>
+<a name="3"><span class="lineNum">       3 </span><span class="lineCov">         38 : export { Provider } from &quot;./provider&quot;</span></a>
+<a name="4"><span class="lineNum">       4 </span><span class="lineCov">         79 : export { isContextOverflow, isContextOverflowFailure } from &quot;./provider-error&quot;</span></a>
+<a name="5"><span class="lineNum">       5 </span>            : export type {</a>
+<a name="6"><span class="lineNum">       6 </span>            :   RouteModelInput,</a>
+<a name="7"><span class="lineNum">       7 </span>            :   RouteRoutedModelInput,</a>
+<a name="8"><span class="lineNum">       8 </span>            :   Interface as LLMClientShape,</a>
+<a name="9"><span class="lineNum">       9 </span>            :   Service as LLMClientService,</a>
+<a name="10"><span class="lineNum">      10 </span>            : } from &quot;./route/client&quot;</a>
+<a name="11"><span class="lineNum">      11 </span><span class="lineCov">         25 : export * from &quot;./schema&quot;</span></a>
+<a name="12"><span class="lineNum">      12 </span><span class="lineCov">         58 : export { Tool, ToolFailure, toDefinitions } from &quot;./tool&quot;</span></a>
+<a name="13"><span class="lineNum">      13 </span><span class="lineCov">         45 : export { ToolRuntime } from &quot;./tool-runtime&quot;</span></a>
+<a name="14"><span class="lineNum">      14 </span>            : export type { DispatchResult as ToolDispatchResult, ToolSettlement } from &quot;./tool-runtime&quot;</a>
+<a name="15"><span class="lineNum">      15 </span>            : export type {</a>
+<a name="16"><span class="lineNum">      16 </span>            :   AnyExecutableTool,</a>
+<a name="17"><span class="lineNum">      17 </span>            :   AnyTool,</a>
+<a name="18"><span class="lineNum">      18 </span>            :   ExecutableTool,</a>
+<a name="19"><span class="lineNum">      19 </span>            :   ExecutableTools,</a>
+<a name="20"><span class="lineNum">      20 </span>            :   Tool as ToolShape,</a>
+<a name="21"><span class="lineNum">      21 </span>            :   ToolExecute,</a>
+<a name="22"><span class="lineNum">      22 </span>            :   ToolExecuteContext,</a>
+<a name="23"><span class="lineNum">      23 </span>            :   ToolModelOutputInput,</a>
+<a name="24"><span class="lineNum">      24 </span>            :   Tools,</a>
+<a name="25"><span class="lineNum">      25 </span>            :   ToolSchema,</a>
+<a name="26"><span class="lineNum">      26 </span>            :   ToolToModelOutput,</a>
+<a name="27"><span class="lineNum">      27 </span>            : } from &quot;./tool&quot;</a>
+<a name="28"><span class="lineNum">      28 </span><span class="lineCov">         28 : export * as LLM from &quot;./llm&quot;</span></a>
+<a name="29"><span class="lineNum">      29 </span>            : export type {</a>
+<a name="30"><span class="lineNum">      30 </span>            :   Definition as ProviderDefinition,</a>
+<a name="31"><span class="lineNum">      31 </span>            :   ModelFactory as ProviderModelFactory,</a>
+<a name="32"><span class="lineNum">      32 </span>            :   ModelOptions as ProviderModelOptions,</a>
+<a name="33"><span class="lineNum">      33 </span>            : } from &quot;./provider&quot;</a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="https://github.com/linux-test-project/lcov" target="_parent">LCOV version 1.16</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>
