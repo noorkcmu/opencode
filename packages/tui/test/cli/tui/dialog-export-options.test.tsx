@@ -19,6 +19,20 @@ async function wait(fn: () => boolean, timeout = 2000) {
   }
 }
 
+function findTextPosition<F extends { lines: { spans: { text: string; width: number }[] }[] }>(
+  frame: F,
+  text: string,
+) {
+  for (let y = 0; y < frame.lines.length; y++) {
+    let x = 0
+    for (const span of frame.lines[y]!.spans) {
+      if (span.text.includes(text)) return { x, y }
+      x += span.width
+    }
+  }
+  throw new Error(`text not found in captured frame: ${text}`)
+}
+
 async function mountExportOptions(input: { root: string; defaults: DialogExportOptionsResult }) {
   const state = path.join(input.root, "state")
   await mkdir(state, { recursive: true })
@@ -146,6 +160,86 @@ test("DialogExportOptions.show resolves null when the dialog is dismissed", asyn
     expect(frame.match(/\[ \]/g)?.length).toBe(2)
 
     dialog.app.mockInput.pressEscape()
+
+    await expect(dialog.result).resolves.toBeNull()
+  } finally {
+    await dialog.cleanup()
+  }
+})
+
+test("DialogExportOptions.show lets tab cycle options and space toggle each one", async () => {
+  await using tmp = await tmpdir()
+  const defaults: DialogExportOptionsResult = {
+    filename: "session-toggle-me.md",
+    thinking: false,
+    toolDetails: false,
+    assistantMetadata: false,
+    openWithoutSaving: false,
+  }
+
+  const dialog = await mountExportOptions({ root: tmp.path, defaults })
+  try {
+    const textarea = dialog.app.renderer.currentFocusedEditor
+    if (!(textarea instanceof TextareaRenderable)) throw new Error("expected focused filename textarea")
+
+    // Cycle filename -> thinking -> toolDetails -> assistantMetadata -> openWithoutSaving,
+    // toggling each option on with space, then tab once more to wrap back to filename.
+    dialog.app.mockInput.pressTab()
+    dialog.app.mockInput.pressKey(" ")
+    dialog.app.mockInput.pressTab()
+    dialog.app.mockInput.pressKey(" ")
+    dialog.app.mockInput.pressTab()
+    dialog.app.mockInput.pressKey(" ")
+    dialog.app.mockInput.pressTab()
+    dialog.app.mockInput.pressKey(" ")
+    dialog.app.mockInput.pressTab()
+
+    await dialog.app.flush()
+    const frame = dialog.app.captureCharFrame()
+    expect(frame.match(/\[x\]/g)?.length).toBe(4)
+    expect(frame.match(/\[ \]/g)).toBeNull()
+
+    dialog.app.mockInput.pressEnter()
+
+    await expect(dialog.result).resolves.toEqual({
+      filename: defaults.filename,
+      thinking: true,
+      toolDetails: true,
+      assistantMetadata: true,
+      openWithoutSaving: true,
+    })
+  } finally {
+    await dialog.cleanup()
+  }
+})
+
+test("DialogExportOptions.show lets the mouse select each option and close the dialog", async () => {
+  await using tmp = await tmpdir()
+  const defaults: DialogExportOptionsResult = {
+    filename: "session-mouse.md",
+    thinking: false,
+    toolDetails: false,
+    assistantMetadata: false,
+    openWithoutSaving: false,
+  }
+
+  const dialog = await mountExportOptions({ root: tmp.path, defaults })
+  try {
+    const textarea = dialog.app.renderer.currentFocusedEditor
+    if (!(textarea instanceof TextareaRenderable)) throw new Error("expected focused filename textarea")
+
+    await dialog.app.flush()
+    for (const label of ["Include thinking", "Include tool details", "Include assistant metadata", "Open without saving"]) {
+      const { x, y } = findTextPosition(dialog.app.captureSpans(), label)
+      await dialog.app.mockMouse.click(x, y)
+      await dialog.app.flush()
+    }
+
+    const frame = dialog.app.captureCharFrame()
+    expect(frame.match(/\[x\]/g)).toBeNull()
+
+    const { x, y } = findTextPosition(dialog.app.captureSpans(), "esc")
+    await dialog.app.mockMouse.click(x, y)
 
     await expect(dialog.result).resolves.toBeNull()
   } finally {
