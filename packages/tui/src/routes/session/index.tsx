@@ -959,14 +959,13 @@ export function Session() {
 
           const defaultFilename = `session-${sessionData.id.slice(0, 8)}.md`
 
-          const options = await DialogExportOptions.show(
-            dialog,
-            defaultFilename,
-            showThinking(),
-            showDetails(),
-            showAssistantMetadata(),
-            false,
-          )
+          const options = await DialogExportOptions.show(dialog, {
+            filename: defaultFilename,
+            thinking: showThinking(),
+            toolDetails: showDetails(),
+            assistantMetadata: showAssistantMetadata(),
+            openWithoutSaving: false,
+          })
 
           if (options === null) return
 

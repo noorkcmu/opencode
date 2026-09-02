@@ -187,29 +187,24 @@ export function DialogExportOptions(props: DialogExportOptionsProps) {
   )
 }
 
-DialogExportOptions.show = (
-  dialog: DialogContext,
-  defaultFilename: string,
-  defaultThinking: boolean,
-  defaultToolDetails: boolean,
-  defaultAssistantMetadata: boolean,
-  defaultOpenWithoutSaving: boolean,
-) => {
-  return new Promise<{
-    filename: string
-    thinking: boolean
-    toolDetails: boolean
-    assistantMetadata: boolean
-    openWithoutSaving: boolean
-  } | null>((resolve) => {
+export type DialogExportOptionsResult = {
+  filename: string
+  thinking: boolean
+  toolDetails: boolean
+  assistantMetadata: boolean
+  openWithoutSaving: boolean
+}
+
+DialogExportOptions.show = (dialog: DialogContext, defaults: DialogExportOptionsResult) => {
+  return new Promise<DialogExportOptionsResult | null>((resolve) => {
     dialog.replace(
       () => (
         <DialogExportOptions
-          defaultFilename={defaultFilename}
-          defaultThinking={defaultThinking}
-          defaultToolDetails={defaultToolDetails}
-          defaultAssistantMetadata={defaultAssistantMetadata}
-          defaultOpenWithoutSaving={defaultOpenWithoutSaving}
+          defaultFilename={defaults.filename}
+          defaultThinking={defaults.thinking}
+          defaultToolDetails={defaults.toolDetails}
+          defaultAssistantMetadata={defaults.assistantMetadata}
+          defaultOpenWithoutSaving={defaults.openWithoutSaving}
           onConfirm={(options) => resolve(options)}
           onCancel={() => resolve(null)}
         />
